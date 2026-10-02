@@ -1,0 +1,50 @@
+name: APK bauen
+
+on:
+  push:
+    branches: [main]
+    paths: ['winter_arc/**', '.github/workflows/apk.yml']
+  pull_request:
+    paths: ['winter_arc/**', '.github/workflows/apk.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    working-directory: winter_arc
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --release
+      - run: cp build/app/outputs/flutter-apk/app-release.apk winter-arc.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: winter-arc-apk
+          path: winter_arc/winter-arc.apk
+      # On main: refresh the "latest" release so the APK can be downloaded
+      # straight from the phone's browser.
+      - if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Winter Arc (neuester Stand)
+          prerelease: false
+          make_latest: true
+          body: Neueste APK, gebaut aus ${{ github.sha }}. Auf dem Handy öffnen und installieren.
+          files: winter_arc/winter-arc.apk

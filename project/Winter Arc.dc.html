@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/nocturne-f0ca4fa6-9bbe-4e9e-b8b1-75db93a7c659/styles.css">
+<script src="_ds/nocturne-f0ca4fa6-9bbe-4e9e-b8b1-75db93a7c659/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)}a{color:var(--color-accent-300)}a:hover{color:var(--color-accent-200)}</style>
+</helmet>
+<section id="t1" style="padding:40px 44px 48px;display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:640px">
+    <div style="display:flex;align-items:center;gap:10px"><span class="tag tag-outline">1</span><h1 style="margin:0;font-size:22px;font-weight:500">Winter Arc · Mobile App</h1></div>
+    <p style="margin:0;color:var(--color-neutral-300);font-size:13px;line-height:1.5;text-wrap:pretty">Annahmen: Challenge vom 1. Okt. bis 31. Dez. (92 Tage), Tagesziele 100 Dips, 50 Klimmzüge, 8 h Schlaf. Beispieldaten zeigen Tag 34. Die Sätze auf <a href="#1a">1a</a> und <a href="#1b">1b</a> sind klickbar.</p>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+
+    <div id="1a" style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;gap:8px;align-items:center;font-size:11px;color:var(--color-neutral-300)"><a href="#1a" class="tag tag-neutral" style="text-decoration:none">1a</a>Heute</div>
+      <div style="width:390px;height:844px;border-radius:44px;background:linear-gradient(180deg,var(--color-surface),var(--color-bg) 40%);box-shadow:var(--shadow-lg);border:1px solid var(--color-divider);overflow:hidden;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;padding:16px 30px 0;font-size:13px;font-weight:500"><span>07:12</span><span style="display:flex;gap:6px"><i class="ph ph-cell-signal-full"></i><i class="ph ph-battery-full"></i></span></div>
+        <div style="padding:28px 24px 0;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:12px;color:var(--color-neutral-300);letter-spacing:.08em;text-transform:uppercase">Montag, 3. November</div>
+          <div style="display:flex;align-items:baseline;gap:10px"><h2 style="margin:0;font-size:34px;font-weight:500;letter-spacing:-.02em">Tag 34</h2><span style="color:var(--color-neutral-400);font-size:15px">von 92</span></div>
+          <div style="margin-top:10px;height:3px;border-radius:2px;background:var(--color-neutral-800);overflow:hidden"><div style="width:37%;height:100%;background:var(--color-accent);box-shadow:0 0 12px var(--color-accent)"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-neutral-400);margin-top:4px"><span>37 % geschafft</span><span style="display:flex;align-items:center;gap:4px;color:var(--color-accent-300)"><i class="ph-fill ph-flame"></i>Serie 12 Tage</span></div>
+        </div>
+        <div style="padding:22px 16px 0;display:flex;flex-direction:column;gap:10px">
+          <div class="card" style="display:flex;flex-direction:row;align-items:center;gap:14px;padding:16px">
+            <svg width="64" height="64" viewBox="0 0 64 64" style="flex:none"><circle cx="32" cy="32" r="27" fill="none" stroke="var(--color-neutral-800)" stroke-width="5"></circle><circle cx="32" cy="32" r="27" fill="none" stroke="var(--color-accent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="{{ dipsOffset }}" transform="rotate(-90 32 32)"></circle></svg>
+            <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:var(--color-neutral-300)">Dips</span><span style="font-size:24px;font-weight:500">{{ dips }}<span style="font-size:14px;color:var(--color-neutral-400)"> / 100</span></span></div>
+            <button class="btn btn-primary" onClick="{{ addDips }}"><i class="ph ph-plus"></i>15</button>
+          </div>
+          <div class="card" style="display:flex;flex-direction:row;align-items:center;gap:14px;padding:16px">
+            <svg width="64" height="64" viewBox="0 0 64 64" style="flex:none"><circle cx="32" cy="32" r="27" fill="none" stroke="var(--color-neutral-800)" stroke-width="5"></circle><circle cx="32" cy="32" r="27" fill="none" stroke="var(--color-accent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="{{ pullOffset }}" transform="rotate(-90 32 32)"></circle></svg>
+            <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:var(--color-neutral-300)">Klimmzüge</span><span style="font-size:24px;font-weight:500">{{ pull }}<span style="font-size:14px;color:var(--color-neutral-400)"> / 50</span></span></div>
+            <button class="btn btn-primary" onClick="{{ addPull }}"><i class="ph ph-plus"></i>8</button>
+          </div>
+          <div class="card" style="display:flex;flex-direction:row;align-items:center;gap:14px;padding:16px">
+            <svg width="64" height="64" viewBox="0 0 64 64" style="flex:none"><circle cx="32" cy="32" r="27" fill="none" stroke="var(--color-neutral-800)" stroke-width="5"></circle><circle cx="32" cy="32" r="27" fill="none" stroke="var(--color-accent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="18" transform="rotate(-90 32 32)"></circle></svg>
+            <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:var(--color-neutral-300)">Schlaf letzte Nacht</span><span style="font-size:24px;font-weight:500">7:08<span style="font-size:14px;color:var(--color-neutral-400)"> / 8 h</span></span></div>
+            <span class="tag tag-accent"><i class="ph ph-moon"></i>23:04</span>
+          </div>
+        </div>
+        <div style="padding:20px 24px 0;font-size:13px;color:var(--color-neutral-300);line-height:1.5">{{ todayNote }}</div>
+        <div style="margin-top:auto;display:flex;justify-content:space-around;padding:12px 16px 30px;border-top:1px solid var(--color-divider);font-size:10px">
+          <span style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--color-accent)"><i class="ph-fill ph-snowflake" style="font-size:22px"></i>Heute</span>
+          <span style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--color-neutral-400)"><i class="ph ph-barbell" style="font-size:22px"></i>Training</span>
+          <span style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--color-neutral-400)"><i class="ph ph-moon" style="font-size:22px"></i>Schlaf</span>
+          <span style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--color-neutral-400)"><i class="ph ph-chart-line-up" style="font-size:22px"></i>Verlauf</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="1b" style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;gap:8px;align-items:center;font-size:11px;color:var(--color-neutral-300)"><a href="#1b" class="tag tag-neutral" style="text-decoration:none">1b</a>Satz eintragen</div>
+      <div style="width:390px;height:844px;border-radius:44px;background:linear-gradient(180deg,var(--color-surface),var(--color-bg) 40%);box-shadow:var(--shadow-lg);border:1px solid var(--color-divider);overflow:hidden;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;padding:16px 30px 0;font-size:13px;font-weight:500"><span>18:40</span><span style="display:flex;gap:6px"><i class="ph ph-cell-signal-full"></i><i class="ph ph-battery-full"></i></span></div>
+        <div style="padding:20px 16px 0;display:flex;align-items:center;justify-content:space-between"><button class="btn btn-ghost btn-icon"><i class="ph ph-x"></i></button><div class="seg"><label class="seg-opt"><input type="radio" name="mode" checked="{{ isDips }}" onChange="{{ pickDips }}">Dips</label><label class="seg-opt"><input type="radio" name="mode" checked="{{ isPull }}" onChange="{{ pickPull }}">Klimmzüge</label></div><span style="width:36px"></span></div>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 24px;gap:6px">
+          <span style="font-size:12px;color:var(--color-neutral-300);letter-spacing:.08em;text-transform:uppercase">Satz {{ setNo }} · Wiederholungen</span>
+          <div style="display:flex;align-items:center;gap:20px">
+            <button class="btn btn-secondary btn-icon" onClick="{{ dec }}" style="width:52px;height:52px"><i class="ph ph-minus" style="font-size:20px"></i></button>
+            <span style="font-size:112px;font-weight:500;letter-spacing:-.04em;line-height:1;min-width:150px;text-align:center;text-shadow:0 0 40px var(--color-accent-700)">{{ reps }}</span>
+            <button class="btn btn-secondary btn-icon" onClick="{{ inc }}" style="width:52px;height:52px"><i class="ph ph-plus" style="font-size:20px"></i></button>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+            <sc-for list="{{ quick }}" as="q" hint-placeholder-count="4"><button class="btn btn-ghost" onClick="{{ q.set }}">{{ q.n }}</button></sc-for>
+          </div>
+          <span style="margin-top:20px;font-size:13px;color:var(--color-neutral-300)">Heute: {{ curDone }} / {{ curGoal }} · noch {{ curLeft }}</span>
+        </div>
+        <div style="padding:0 16px;display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:11px;color:var(--color-neutral-400);padding:0 8px">Sätze heute</span>
+          <div style="display:flex;gap:6px;padding:4px 8px 12px;flex-wrap:wrap"><sc-for list="{{ curSets }}" as="s" hint-placeholder-count="3"><span class="tag tag-neutral">{{ s }}</span></sc-for></div>
+        </div>
+        <div style="padding:0 16px 34px"><button class="btn btn-primary btn-block" onClick="{{ save }}" style="height:52px;font-size:15px">Satz speichern</button></div>
+      </div>
+    </div>
+
+    <div id="1c" style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;gap:8px;align-items:center;font-size:11px;color:var(--color-neutral-300)"><a href="#1c" class="tag tag-neutral" style="text-decoration:none">1c</a>Schlaf</div>
+      <div style="width:390px;height:844px;border-radius:44px;background:linear-gradient(180deg,var(--color-surface),var(--color-bg) 40%);box-shadow:var(--shadow-lg);border:1px solid var(--color-divider);overflow:hidden;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;padding:16px 30px 0;font-size:13px;font-weight:500"><span>07:12</span><span style="display:flex;gap:6px"><i class="ph ph-cell-signal-full"></i><i class="ph ph-battery-full"></i></span></div>
+        <div style="padding:28px 24px 0;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:12px;color:var(--color-neutral-300);letter-spacing:.08em;text-transform:uppercase">Schlaf · letzte 7 Nächte</div>
+          <div style="display:flex;align-items:baseline;gap:10px"><h2 style="margin:0;font-size:34px;font-weight:500;letter-spacing:-.02em">Ø 7:31 h</h2><span style="color:var(--color-neutral-400);font-size:15px">Ziel 8 h</span></div>
+        </div>
+        <div style="padding:26px 24px 0;display:flex;flex-direction:column;gap:8px">
+          <div style="position:relative;height:200px;display:flex;align-items:flex-end;gap:12px">
+            <div style="position:absolute;left:0;right:0;bottom:{{ goalLine }}px;height:1px;background:linear-gradient(90deg,transparent,var(--color-accent-600) 48px,var(--color-accent-600) calc(100% - 48px),transparent)"></div>
+            <sc-for list="{{ nights }}" as="n" hint-placeholder-count="7"><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:{{ n.h }}px;border-radius:6px 6px 2px 2px;background:{{ n.bg }}"></div></div></sc-for>
+          </div>
+          <div style="display:flex;gap:12px;font-size:11px;color:var(--color-neutral-400)"><sc-for list="{{ nights }}" as="n" hint-placeholder-count="7"><span style="flex:1;text-align:center">{{ n.d }}</span></sc-for></div>
+        </div>
+        <div style="padding:22px 16px 0;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="card" style="padding:14px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:var(--color-neutral-300);display:flex;gap:6px;align-items:center"><i class="ph ph-moon"></i>Im Bett</span><span style="font-size:22px;font-weight:500">23:04</span></div>
+          <div class="card" style="padding:14px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:var(--color-neutral-300);display:flex;gap:6px;align-items:center"><i class="ph ph-sun-horizon"></i>Aufgestanden</span><span style="font-size:22px;font-weight:500">06:12</span></div>
+        </div>
+        <div style="padding:16px 16px 0"><div class="card" style="padding:14px;display:flex;flex-direction:row;align-items:center;gap:12px"><i class="ph ph-alarm" style="font-size:22px;color:var(--color-accent)"></i><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px">Schlafenszeit-Erinnerung</span><span style="font-size:12px;color:var(--color-neutral-400)">Heute um 22:15</span></div><span class="tag tag-accent">An</span></div></div>
+        <div style="margin-top:auto;padding:0 16px 34px"><button class="btn btn-primary btn-block" style="height:52px;font-size:15px"><i class="ph ph-plus"></i>Nacht eintragen</button></div>
+      </div>
+    </div>
+
+    <div id="1d" style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;gap:8px;align-items:center;font-size:11px;color:var(--color-neutral-300)"><a href="#1d" class="tag tag-neutral" style="text-decoration:none">1d</a>Verlauf</div>
+      <div style="width:390px;height:844px;border-radius:44px;background:linear-gradient(180deg,var(--color-surface),var(--color-bg) 40%);box-shadow:var(--shadow-lg);border:1px solid var(--color-divider);overflow:hidden;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;padding:16px 30px 0;font-size:13px;font-weight:500"><span>07:12</span><span style="display:flex;gap:6px"><i class="ph ph-cell-signal-full"></i><i class="ph ph-battery-full"></i></span></div>
+        <div style="padding:28px 24px 0;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:12px;color:var(--color-neutral-300);letter-spacing:.08em;text-transform:uppercase">Winter Arc 2026</div>
+          <h2 style="margin:0;font-size:34px;font-weight:500;letter-spacing:-.02em">Verlauf</h2>
+        </div>
+        <div style="padding:20px 24px 0;display:flex;flex-direction:column;gap:10px">
+          <div style="display:grid;grid-template-columns:repeat(13,1fr);gap:4px"><sc-for list="{{ heat }}" as="c" hint-placeholder-count="92"><div style="aspect-ratio:1;border-radius:3px;background:{{ c.bg }};box-shadow:{{ c.glow }}"></div></sc-for></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-neutral-400)"><span>1. Okt.</span><span>31. Dez.</span></div>
+          <div style="display:flex;gap:14px;font-size:11px;color:var(--color-neutral-300)"><span style="display:flex;gap:5px;align-items:center"><span style="width:10px;height:10px;border-radius:2px;background:var(--color-accent)"></span>Alle 3 Ziele</span><span style="display:flex;gap:5px;align-items:center"><span style="width:10px;height:10px;border-radius:2px;background:var(--color-accent-700)"></span>1–2 Ziele</span><span style="display:flex;gap:5px;align-items:center"><span style="width:10px;height:10px;border-radius:2px;background:var(--color-neutral-800)"></span>Keins</span></div>
+        </div>
+        <div style="padding:22px 16px 0;display:flex;flex-direction:column">
+          <table class="table" style="width:100%">
+            <thead><tr><th style="text-align:left">Gesamt</th><th style="text-align:right">Erreicht</th><th style="text-align:right">Bestwert</th></tr></thead>
+            <tbody>
+              <tr><td>Dips</td><td style="text-align:right">3.120</td><td style="text-align:right">32 am Stück</td></tr>
+              <tr><td>Klimmzüge</td><td style="text-align:right">1.486</td><td style="text-align:right">14 am Stück</td></tr>
+              <tr><td>Schlaf ≥ 8 h</td><td style="text-align:right">19 Nächte</td><td style="text-align:right">9:02 h</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:16px 16px 0"><div class="card" style="padding:14px;display:flex;flex-direction:row;align-items:center;gap:12px"><i class="ph-fill ph-flame" style="font-size:22px;color:var(--color-accent)"></i><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:14px">Längste Serie: 12 Tage</span><span style="font-size:12px;color:var(--color-neutral-400)">Läuft seit 23. Oktober</span></div></div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { dips: 60, pull: 24, mode: 'dips', reps: 12, sets: { dips: [20, 20, 20], pull: [8, 8, 8] } };
+  renderVals() {
+    const s = this.state, C = 169.6;
+    const off = (v, g) => C * (1 - Math.min(v / g, 1));
+    const goal = { dips: 100, pull: 50 }, done = { dips: s.dips, pull: s.pull };
+    const left = Math.max(0, goal[s.mode] - done[s.mode]);
+    const allDone = s.dips >= 100 && s.pull >= 50;
+    const nightsRaw = [['Di', 7.4], ['Mi', 8.2], ['Do', 6.9], ['Fr', 7.6], ['Sa', 8.5], ['So', 7.9], ['Mo', 7.1]];
+    const px = h => Math.round((h / 10) * 200);
+    let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    const heat = Array.from({ length: 92 }, (_, i) => {
+      if (i >= 34) return { bg: 'var(--color-neutral-900)', glow: 'none' };
+      if (i === 33) return { bg: 'var(--color-accent-700)', glow: '0 0 0 1px var(--color-accent)' };
+      const r = i >= 21 ? 0.9 : rnd();
+      return r > 0.55 ? { bg: 'var(--color-accent)', glow: '0 0 6px var(--color-accent-700)' } : r > 0.15 ? { bg: 'var(--color-accent-700)', glow: 'none' } : { bg: 'var(--color-neutral-800)', glow: 'none' };
+    });
+    const segOn = 'background:var(--color-accent-800);color:var(--color-accent-100)';
+    return {
+      dips: s.dips, pull: s.pull,
+      dipsOffset: off(s.dips, 100), pullOffset: off(s.pull, 50),
+      addDips: () => this.setState({ dips: s.dips + 15 }),
+      addPull: () => this.setState({ pull: s.pull + 8 }),
+      todayNote: allDone ? 'Training für heute erledigt. Jetzt zählt nur noch der Schlaf.' : `Noch ${Math.max(0, 100 - s.dips)} Dips und ${Math.max(0, 50 - s.pull)} Klimmzüge bis zum Tagesziel.`,
+      isDips: s.mode === 'dips', isPull: s.mode === 'pull',
+      pickDips: () => this.setState({ mode: 'dips', reps: 12 }),
+      pickPull: () => this.setState({ mode: 'pull', reps: 8 }),
+      reps: s.reps,
+      inc: () => this.setState({ reps: s.reps + 1 }),
+      dec: () => this.setState({ reps: Math.max(0, s.reps - 1) }),
+      quick: (s.mode === 'dips' ? [10, 15, 20, 25] : [5, 8, 10, 12]).map(n => ({ n, set: () => this.setState({ reps: n }) })),
+      setNo: s.sets[s.mode].length + 1,
+      curDone: done[s.mode], curGoal: goal[s.mode], curLeft: left,
+      curSets: s.sets[s.mode].map(n => `${n} Wdh.`),
+      save: () => {
+        if (!s.reps) return;
+        const sets = { ...s.sets, [s.mode]: [...s.sets[s.mode], s.reps] };
+        this.setState(s.mode === 'dips' ? { sets, dips: s.dips + s.reps } : { sets, pull: s.pull + s.reps });
+      },
+      nights: nightsRaw.map(([d, h], i) => ({ d, h: px(h), bg: i === 6 ? 'var(--color-accent)' : h >= 8 ? 'var(--color-accent-600)' : 'var(--color-neutral-700)' })),
+      goalLine: px(8),
+      heat
+    };
+  }
+}
+</script>
+</body>
+</html>

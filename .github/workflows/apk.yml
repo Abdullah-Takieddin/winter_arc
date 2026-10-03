@@ -15,6 +15,11 @@ defaults:
   run:
     working-directory: winter_arc
 
+# Two quick merges must not race each other while replacing the release.
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -37,14 +42,19 @@ jobs:
         with:
           name: winter-arc-apk
           path: winter_arc/winter-arc.apk
-      # On main: refresh the "latest" release so the APK can be downloaded
-      # straight from the phone's browser.
-      - if: github.ref == 'refs/heads/main'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest
-          name: Winter Arc (neuester Stand)
-          prerelease: false
-          make_latest: true
-          body: Neueste APK, gebaut aus ${{ github.sha }}. Auf dem Handy öffnen und installieren.
-          files: winter_arc/winter-arc.apk
+      # On main: replace the "latest" release so the APK can be downloaded
+      # straight from the phone's browser. Deleting and recreating it moves
+      # the tag to this commit and swaps the file; editing a release in
+      # place left the old APK behind.
+      - name: Publish release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release delete latest --cleanup-tag --yes || true
+          gh release create latest winter-arc.apk \
+            --target "$GITHUB_SHA" \
+            --latest \
+            --title "Winter Arc · $(date -u +%d.%m.%Y) · ${GITHUB_SHA::7}" \
+            --notes "Gebaut aus ${GITHUB_SHA::7}. Auf dem Handy öffnen und über die alte Version installieren – deine Einträge bleiben erhalten."

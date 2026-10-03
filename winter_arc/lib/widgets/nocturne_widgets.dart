@@ -342,17 +342,87 @@ Future<T?> showNocDialog<T>(
         borderRadius: BorderRadius.circular(Noc.radiusLg),
         boxShadow: Noc.shadowLg,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-          const SizedBox(height: Noc.space3 * 1.5),
-          DefaultTextStyle.merge(style: const TextStyle(fontSize: 14), child: body),
-          const SizedBox(height: Noc.space3 * 2),
-          Wrap(alignment: WrapAlignment.end, spacing: Noc.space2, runSpacing: Noc.space2, children: actions),
-        ],
+      // Scrolls when the keyboard leaves too little room for a form.
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+            const SizedBox(height: Noc.space3 * 1.5),
+            DefaultTextStyle.merge(style: const TextStyle(fontSize: 14), child: body),
+            // A body that renders its own (stateful) buttons passes no actions.
+            if (actions.isNotEmpty) ...[const SizedBox(height: Noc.space3 * 2), NocActions(actions)],
+          ],
+        ),
       ),
     ),
   ),
 );
+
+/// The right-aligned button row at the foot of a dialog.
+class NocActions extends StatelessWidget {
+  const NocActions(this.children, {super.key});
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) =>
+      Wrap(alignment: WrapAlignment.end, spacing: Noc.space2, runSpacing: Noc.space2, children: children);
+}
+
+/// `.field` + `.input` — a labelled text field on the surface.
+class NocInput extends StatelessWidget {
+  const NocInput({
+    super.key,
+    required this.label,
+    required this.controller,
+    this.hint,
+    this.obscure = false,
+    this.enabled = true,
+    this.keyboardType,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final String? hint;
+  final bool obscure;
+  final bool enabled;
+  final TextInputType? keyboardType;
+
+  @override
+  Widget build(BuildContext context) {
+    OutlineInputBorder edge(Color c) => OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Noc.radiusMd),
+      borderSide: BorderSide(color: c),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontSize: 12, color: Noc.textMix(.7))),
+        const SizedBox(height: 5),
+        TextField(
+          controller: controller,
+          enabled: enabled,
+          obscureText: obscure,
+          autocorrect: false,
+          enableSuggestions: !obscure,
+          keyboardType: keyboardType,
+          style: const TextStyle(fontSize: 14, color: Noc.text),
+          cursorColor: Noc.accent,
+          decoration: InputDecoration(
+            isDense: true,
+            hintText: hint,
+            hintStyle: const TextStyle(fontSize: 14, color: Noc.neutral600),
+            filled: true,
+            fillColor: Noc.surface,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            border: edge(Noc.divider),
+            enabledBorder: edge(Noc.divider),
+            disabledBorder: edge(Noc.divider),
+            focusedBorder: edge(Noc.accent),
+          ),
+        ),
+      ],
+    );
+  }
+}

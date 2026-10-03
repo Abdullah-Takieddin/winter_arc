@@ -8,7 +8,12 @@ abstract final class Ph {
   static const alarm = IconData(0xe006, fontFamily: _f);
   static const barbell = IconData(0xe0b6, fontFamily: _f);
   static const calendarBlank = IconData(0xe10a, fontFamily: _f);
+  static const caretLeft = IconData(0xe138, fontFamily: _f);
+  static const caretRight = IconData(0xe13a, fontFamily: _f);
   static const chartLineUp = IconData(0xe156, fontFamily: _f);
+  static const cloudArrowUp = IconData(0xe1ae, fontFamily: _f);
+  static const cloudCheck = IconData(0xe1b0, fontFamily: _f);
+  static const cloudSlash = IconData(0xe1b6, fontFamily: _f);
   static const gear = IconData(0xe270, fontFamily: _f);
   static const minus = IconData(0xe32a, fontFamily: _f);
   static const moon = IconData(0xe330, fontFamily: _f);
@@ -16,6 +21,7 @@ abstract final class Ph {
   static const plus = IconData(0xe3d4, fontFamily: _f);
   static const snowflake = IconData(0xe5aa, fontFamily: _f);
   static const sunHorizon = IconData(0xe5b6, fontFamily: _f);
+  static const warningCircle = IconData(0xe4e2, fontFamily: _f);
   static const x = IconData(0xe4f6, fontFamily: _f);
 }
 

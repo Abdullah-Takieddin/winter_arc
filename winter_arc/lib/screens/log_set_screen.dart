@@ -6,18 +6,27 @@ import '../theme/icons.dart';
 import '../models/models.dart';
 import '../state/app_state.dart';
 import '../theme/nocturne.dart';
+import '../util/dates.dart';
 import '../widgets/nocturne_widgets.dart';
 
 /// Opens 1b as a full-screen modal, the way the mockup's close button implies.
-Future<void> openLogSet(BuildContext context, [Exercise exercise = Exercise.dips]) =>
-    Navigator.of(context)
-        .push(MaterialPageRoute(fullscreenDialog: true, builder: (_) => LogSetScreen(initial: exercise)));
+/// [day] logs for an earlier day instead of today.
+Future<void> openLogSet(BuildContext context, {Exercise exercise = Exercise.dips, DateTime? day}) =>
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => LogSetScreen(initial: exercise, day: day),
+      ),
+    );
 
 /// 1b · Satz eintragen — pick the exercise, dial in reps, save the set.
 class LogSetScreen extends StatefulWidget {
-  const LogSetScreen({super.key, this.initial = Exercise.dips});
+  const LogSetScreen({super.key, this.initial = Exercise.dips, this.day});
 
   final Exercise initial;
+
+  /// The day sets go to; null means today.
+  final DateTime? day;
 
   static const quickReps = {
     Exercise.dips: [10, 15, 20, 25],
@@ -31,20 +40,24 @@ class LogSetScreen extends StatefulWidget {
 
 class _LogSetScreenState extends State<LogSetScreen> {
   late Exercise _mode = widget.initial;
+  late DateTime? _day = widget.day;
   int? _reps;
 
   /// Starts from the last set of the day, else the mockup's default.
-  int _startReps(AppState app) {
-    final sets = app.todayLog.sets(_mode);
+  int _startReps(DayLog log) {
+    final sets = log.sets(_mode);
     return sets.isNotEmpty ? sets.last : LogSetScreen.defaultReps[_mode]!;
   }
 
   @override
   Widget build(BuildContext context) {
     final app = AppScope.of(context);
-    final reps = _reps ??= _startReps(app);
-    final sets = app.todayLog.sets(_mode);
-    final done = app.todayLog.total(_mode);
+    final day = _day ?? app.today;
+    final isToday = day == app.today;
+    final log = app.log(day);
+    final reps = _reps ??= _startReps(log);
+    final sets = log.sets(_mode);
+    final done = log.total(_mode);
     final goal = app.settings.goalFor(_mode);
     final left = (goal - done).clamp(0, goal);
 
@@ -90,6 +103,13 @@ class _LogSetScreenState extends State<LogSetScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            NocTag(
+                              isToday ? 'Heute' : dayLabel(day),
+                              icon: Ph.calendarBlank,
+                              variant: isToday ? NocTagVariant.outline : NocTagVariant.accent,
+                              onTap: () => _pickDay(app, day),
+                            ),
+                            const SizedBox(height: 14),
                             Text('SATZ ${sets.length + 1} · WIEDERHOLUNGEN', style: NocText.kicker),
                             const SizedBox(height: 6),
                             Row(
@@ -138,7 +158,10 @@ class _LogSetScreenState extends State<LogSetScreen> {
                               ],
                             ),
                             const SizedBox(height: 26),
-                            Text('Heute: $done / $goal · noch $left', style: NocText.label),
+                            Text(
+                              '${isToday ? 'Heute' : 'Am ${shortDate(day)}'}: $done / $goal · noch $left',
+                              style: NocText.label,
+                            ),
                           ],
                         ),
                       ),
@@ -148,7 +171,7 @@ class _LogSetScreenState extends State<LogSetScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Sätze heute', style: NocText.small),
+                          Text(isToday ? 'Sätze heute' : 'Sätze am ${shortDate(day)}', style: NocText.small),
                           const SizedBox(height: 8),
                           sets.isEmpty
                               ? Text('Noch keine', style: NocText.small.copyWith(color: Noc.neutral600))
@@ -160,7 +183,7 @@ class _LogSetScreenState extends State<LogSetScreen> {
                                       NocTag(
                                         '${sets[i]} Wdh.',
                                         variant: NocTagVariant.neutral,
-                                        onTap: () => _confirmRemove(app, i),
+                                        onTap: () => _confirmRemove(app, day, i),
                                       ),
                                   ],
                                 ),
@@ -178,7 +201,7 @@ class _LogSetScreenState extends State<LogSetScreen> {
                         onPressed: reps > 0
                             ? () {
                                 HapticFeedback.lightImpact();
-                                app.addSet(_mode, reps);
+                                app.addSet(_mode, reps, day: day);
                               }
                             : null,
                       ),
@@ -202,12 +225,32 @@ class _LogSetScreenState extends State<LogSetScreen> {
     onPressed: onPressed,
   );
 
-  Future<void> _confirmRemove(AppState app, int index) async {
-    final reps = app.todayLog.sets(_mode)[index];
+  /// Switches to an earlier day (back to the challenge start, at most a year).
+  Future<void> _pickDay(AppState app, DateTime current) async {
+    final yearAgo = addDays(app.today, -365);
+    final first = app.settings.start.isBefore(yearAgo) ? yearAgo : app.settings.start;
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: current.isBefore(first) ? first : current,
+      firstDate: first.isAfter(app.today) ? app.today : first,
+      lastDate: app.today,
+      helpText: 'Für welchen Tag?',
+    );
+    if (picked != null) {
+      setState(() {
+        _day = picked;
+        _reps = null;
+      });
+    }
+  }
+
+  Future<void> _confirmRemove(AppState app, DateTime day, int index) async {
+    final reps = app.log(day).sets(_mode)[index];
+    final where = day == app.today ? 'aus dem heutigen Tag' : 'vom ${shortDate(day)}';
     final ok = await showNocDialog<bool>(
       context,
       title: 'Satz löschen?',
-      body: Text('Satz ${index + 1} mit $reps ${_mode.label} wird aus dem heutigen Tag entfernt.'),
+      body: Text('Satz ${index + 1} mit $reps ${_mode.label} wird $where entfernt.'),
       actions: [
         Builder(
           builder: (c) => NocButton(
@@ -221,6 +264,6 @@ class _LogSetScreenState extends State<LogSetScreen> {
         ),
       ],
     );
-    if (ok == true) await app.removeSet(_mode, index);
+    if (ok == true) await app.removeSet(_mode, index, day: day);
   }
 }

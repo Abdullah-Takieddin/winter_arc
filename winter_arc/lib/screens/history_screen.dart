@@ -7,6 +7,8 @@ import '../state/app_state.dart';
 import '../theme/nocturne.dart';
 import '../util/dates.dart';
 import '../widgets/nocturne_widgets.dart';
+import 'day_screen.dart';
+import 'notion_dialog.dart';
 import 'settings_dialog.dart';
 
 /// 1d · Verlauf — the whole challenge as a heatmap, totals and best values.
@@ -60,6 +62,8 @@ class HistoryScreen extends StatelessWidget {
                   _Legend(Noc.neutral800, 'Keins'),
                 ],
               ),
+              const SizedBox(height: 8),
+              const Text('Tippe auf einen Tag, um ihn anzusehen oder nachzutragen.', style: NocText.small),
             ],
           ),
         ),
@@ -81,6 +85,7 @@ class HistoryScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: _StreakCard(streak: app.longestStreak, running: app.longestIsCurrent),
         ),
+        const Padding(padding: EdgeInsets.fromLTRB(16, 10, 16, 0), child: NotionSyncCard()),
       ],
     );
   }
@@ -95,7 +100,7 @@ class _Heatmap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-    builder: (_, c) {
+    builder: (context, c) {
       final size = (c.maxWidth - _gap * (_columns - 1)) / _columns;
       return Wrap(
         spacing: _gap,
@@ -110,21 +115,26 @@ class _Heatmap extends StatelessWidget {
                     HeatLevel.none => ' · keins',
                     HeatLevel.future => '',
                   }}',
-              child: Container(
-                width: size,
-                height: size,
-                decoration: BoxDecoration(
-                  color: switch (cell.level) {
-                    HeatLevel.all => Noc.accent,
-                    HeatLevel.some => Noc.accent700,
-                    HeatLevel.none => Noc.neutral800,
-                    HeatLevel.future => Noc.neutral900,
-                  },
-                  borderRadius: BorderRadius.circular(3),
-                  border: cell.isToday ? Border.all(color: Noc.accent) : null,
-                  boxShadow: cell.level == HeatLevel.all && !cell.isToday
-                      ? const [BoxShadow(color: Noc.accent700, blurRadius: 6)]
-                      : null,
+              // Past days and today open the day view for review or backfill.
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: cell.level == HeatLevel.future ? null : () => openDay(context, cell.date),
+                child: Container(
+                  width: size,
+                  height: size,
+                  decoration: BoxDecoration(
+                    color: switch (cell.level) {
+                      HeatLevel.all => Noc.accent,
+                      HeatLevel.some => Noc.accent700,
+                      HeatLevel.none => Noc.neutral800,
+                      HeatLevel.future => Noc.neutral900,
+                    },
+                    borderRadius: BorderRadius.circular(3),
+                    border: cell.isToday ? Border.all(color: Noc.accent) : null,
+                    boxShadow: cell.level == HeatLevel.all && !cell.isToday
+                        ? const [BoxShadow(color: Noc.accent700, blurRadius: 6)]
+                        : null,
+                  ),
                 ),
               ),
             ),

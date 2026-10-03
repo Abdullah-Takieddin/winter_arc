@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/icons.dart';
 
 import '../state/app_state.dart';
+import '../sync/notion_sync.dart';
 import '../theme/nocturne.dart';
 import 'history_screen.dart';
 import 'log_set_screen.dart';
@@ -35,10 +36,13 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  /// Coming back to the app the next morning should show the new day.
+  /// Coming back to the app should show the new day and send whatever
+  /// didn't reach Notion yet (e.g. entries made offline).
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) AppScope.of(context).refresh();
+    if (state != AppLifecycleState.resumed) return;
+    AppScope.of(context).refresh();
+    SyncScope.of(context).flush();
   }
 
   @override

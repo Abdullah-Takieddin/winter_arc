@@ -231,16 +231,17 @@ class _TimeCard extends StatelessWidget {
   );
 }
 
-/// Logs (or edits) last night: bedtime and wake time.
-Future<void> showSleepEntryDialog(BuildContext context) async {
+/// Logs (or edits) the night that ended on [day] (default: last night).
+Future<void> showSleepEntryDialog(BuildContext context, {DateTime? day}) async {
   final app = AppScope.of(context);
-  final log = app.todayLog;
+  final d = day ?? app.today;
+  final log = app.log(d);
   var bed = log.bedMinutes ?? 23 * 60;
   var wake = log.wakeMinutes ?? 7 * 60;
 
   await showNocDialog<void>(
     context,
-    title: 'Letzte Nacht',
+    title: d == app.today ? 'Letzte Nacht' : 'Nacht zum ${dayLabel(d)}',
     body: StatefulBuilder(
       builder: (context, setState) {
         Future<void> pick(int current, ValueChanged<int> apply, String help) async {
@@ -275,7 +276,7 @@ Future<void> showSleepEntryDialog(BuildContext context) async {
             variant: NocButtonVariant.ghost,
             label: 'Löschen',
             onPressed: () {
-              app.clearSleep();
+              app.clearSleep(day: d);
               Navigator.pop(c);
             },
           ),
@@ -291,7 +292,7 @@ Future<void> showSleepEntryDialog(BuildContext context) async {
         builder: (c) => NocButton(
           label: 'Speichern',
           onPressed: () {
-            app.setSleep(bed, wake);
+            app.setSleep(bed, wake, day: d);
             Navigator.pop(c);
           },
         ),

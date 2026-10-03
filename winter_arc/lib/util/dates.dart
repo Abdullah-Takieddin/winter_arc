@@ -62,6 +62,9 @@ String shortDate(DateTime d) => '${d.day}. ${_monthsShort[d.month - 1]}';
 /// `Mo`
 String weekdayShort(DateTime d) => _weekdaysShort[d.weekday - 1];
 
+/// `Mi, 1. Okt.`
+String dayLabel(DateTime d) => '${weekdayShort(d)}, ${shortDate(d)}';
+
 /// Minutes since midnight → `23:04`.
 String clock(int minutes) => '${_two(minutes ~/ 60 % 24)}:${_two(minutes % 60)}';
 

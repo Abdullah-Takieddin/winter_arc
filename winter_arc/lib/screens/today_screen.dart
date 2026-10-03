@@ -6,6 +6,7 @@ import '../models/models.dart';
 import '../state/app_state.dart';
 import '../theme/nocturne.dart';
 import '../util/dates.dart';
+import '../widgets/goal_card.dart';
 import '../widgets/nocturne_widgets.dart';
 import 'log_set_screen.dart';
 import 'sleep_screen.dart';
@@ -67,7 +68,7 @@ class TodayScreen extends StatelessWidget {
           child: Column(
             children: [
               for (final e in Exercise.values) ...[_ExerciseCard(exercise: e), const SizedBox(height: 10)],
-              _GoalCard(
+              GoalCard(
                 progress: (sleep.sleepMinutes ?? 0) / s.sleepGoalMinutes,
                 label: 'Schlaf letzte Nacht',
                 value: sleep.sleepMinutes == null ? '–' : hm(sleep.sleepMinutes!),
@@ -139,12 +140,12 @@ class _ExerciseCard extends StatelessWidget {
     final done = app.todayLog.total(exercise);
     final goal = app.settings.goalFor(exercise);
     final add = TodayScreen.quickAdd[exercise]!;
-    return _GoalCard(
+    return GoalCard(
       progress: done / goal,
       label: exercise.label,
       value: '$done',
       unit: ' / $goal',
-      onTap: () => openLogSet(context, exercise),
+      onTap: () => openLogSet(context, exercise: exercise),
       trailing: NocButton(
         label: '$add',
         icon: Ph.plus,
@@ -153,51 +154,4 @@ class _ExerciseCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _GoalCard extends StatelessWidget {
-  const _GoalCard({
-    required this.progress,
-    required this.label,
-    required this.value,
-    required this.unit,
-    required this.trailing,
-    this.onTap,
-  });
-
-  final double progress;
-  final String label;
-  final String value;
-  final String unit;
-  final Widget trailing;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) => NocCard(
-    onTap: onTap,
-    child: Row(
-      children: [
-        ProgressRing(value: progress),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: NocText.label),
-              const SizedBox(height: 2),
-              Text.rich(
-                TextSpan(
-                  text: value,
-                  style: NocText.value,
-                  children: [TextSpan(text: unit, style: NocText.valueUnit)],
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 14),
-        trailing,
-      ],
-    ),
-  );
 }

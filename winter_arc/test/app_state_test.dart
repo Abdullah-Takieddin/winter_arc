@@ -151,6 +151,48 @@ void main() {
     expect(reloaded.settings.pullGoal, 40);
   });
 
+  group('backfill', () {
+    test('sets and nights land on the chosen day', () async {
+      final h = await Harness.create(today);
+      final oct30 = DateTime(2026, 10, 30, 15); // time of day is ignored
+      await h.state.addSet(Exercise.dips, 25, day: oct30);
+      await h.state.setSleep(23 * 60, 7 * 60, day: oct30);
+      await h.state.removeSet(Exercise.dips, 0, day: oct30);
+      await h.state.addSet(Exercise.pull, 12, day: oct30);
+
+      final log = h.state.log(DateTime(2026, 10, 30));
+      expect(log.dips, isEmpty);
+      expect(log.pull, [12]);
+      expect(log.sleepMinutes, 480);
+      expect(h.state.todayLog.isEmpty, isTrue);
+    });
+
+    test('filling in missed days repairs the streak', () async {
+      final h = await Harness.create(today);
+      await h.complete(DateTime(2026, 11, 3));
+      await h.complete(DateTime(2026, 11, 1));
+      expect(h.state.currentStreak.length, 1);
+
+      await h.complete(DateTime(2026, 11, 2)); // forgot to log yesterday
+      expect(h.state.currentStreak.length, 3);
+    });
+
+    test('future days are refused', () async {
+      final h = await Harness.create(today);
+      expect(() => h.state.addSet(Exercise.dips, 10, day: DateTime(2026, 11, 4)), throwsArgumentError);
+      expect(h.state.loggedDays, isEmpty);
+    });
+
+    test('reports which day changed', () async {
+      final h = await Harness.create(today);
+      final seen = <DateTime>[];
+      h.state.addDayListener(seen.addAll);
+      await h.state.addSet(Exercise.dips, 10, day: DateTime(2026, 10, 20));
+      await h.state.addSet(Exercise.dips, 10);
+      expect(seen, [DateTime(2026, 10, 20), DateTime(2026, 11, 3)]);
+    });
+  });
+
   test('German formatting', () {
     expect(grouped(3120), '3.120');
     expect(grouped(1486), '1.486');
@@ -159,5 +201,6 @@ void main() {
     expect(shortDate(DateTime(2026, 12, 31)), '31. Dez.');
     expect(hoursLabel(480), '8 h');
     expect(hoursLabel(450), '7:30 h');
+    expect(dayLabel(DateTime(2026, 10, 1)), 'Do, 1. Okt.');
   });
 }

@@ -165,43 +165,85 @@ class AppState extends ChangeNotifier {
 
   DayLog _editable(DateTime day) => _logs.putIfAbsent(dateKey(day), DayLog.new);
 
-  Future<void> addSet(Exercise e, int reps) async {
-    if (reps <= 0) return;
-    _editable(today).sets(e).add(reps);
-    await _saveLogs();
+  /// The day an edit targets: [day] (time stripped) or today. Future days
+  /// can't be logged.
+  DateTime _target(DateTime? day) {
+    final d = day == null ? today : dateOnly(day);
+    if (d.isAfter(today)) throw ArgumentError.value(day, 'day', 'lies in the future');
+    return d;
   }
 
-  Future<void> removeSet(Exercise e, int index) async {
-    final sets = _editable(today).sets(e);
+  Future<void> addSet(Exercise e, int reps, {DateTime? day}) async {
+    if (reps <= 0) return;
+    final d = _target(day);
+    _editable(d).sets(e).add(reps);
+    await _saveLogs(d);
+  }
+
+  Future<void> removeSet(Exercise e, int index, {DateTime? day}) async {
+    final d = _target(day);
+    final sets = _editable(d).sets(e);
     if (index < 0 || index >= sets.length) return;
     sets.removeAt(index);
-    await _saveLogs();
+    await _saveLogs(d);
   }
 
-  Future<void> setSleep(int bedMinutes, int wakeMinutes) async {
-    _editable(today)
+  Future<void> setSleep(int bedMinutes, int wakeMinutes, {DateTime? day}) async {
+    final d = _target(day);
+    _editable(d)
       ..bedMinutes = bedMinutes
       ..wakeMinutes = wakeMinutes;
-    await _saveLogs();
+    await _saveLogs(d);
   }
 
-  Future<void> clearSleep() async {
-    _editable(today)
+  Future<void> clearSleep({DateTime? day}) async {
+    final d = _target(day);
+    _editable(d)
       ..bedMinutes = null
       ..wakeMinutes = null;
-    await _saveLogs();
+    await _saveLogs(d);
   }
 
   Future<void> updateSettings(ChallengeSettings s) async {
+    final old = _settings;
     _settings = s;
     notifyListeners();
     await _repo.saveSettings(s);
+    // Goals and the window change every day's "Ziele erreicht" and "Tag N";
+    // the reminder doesn't touch any logged day.
+    final affectsDays =
+        old.start != s.start ||
+        old.end != s.end ||
+        old.dipsGoal != s.dipsGoal ||
+        old.pullGoal != s.pullGoal ||
+        old.sleepGoalMinutes != s.sleepGoalMinutes;
+    if (affectsDays) _emitDays(loggedDays);
   }
 
-  Future<void> _saveLogs() async {
+  Future<void> _saveLogs(DateTime day) async {
     notifyListeners();
     await _repo.saveLogs(_logs);
+    _emitDays([day]);
   }
+
+  // — change feed for observers such as the Notion sync —
+
+  final _dayListeners = <void Function(Iterable<DateTime> days)>[];
+
+  /// Calls [listener] with the days whose data changed, after each save.
+  void addDayListener(void Function(Iterable<DateTime> days) listener) => _dayListeners.add(listener);
+
+  void _emitDays(Iterable<DateTime> days) {
+    for (final l in _dayListeners) {
+      l(days);
+    }
+  }
+
+  /// Every day with at least one entry.
+  List<DateTime> get loggedDays => [
+    for (final e in _logs.entries)
+      if (!e.value.isEmpty) parseDateKey(e.key),
+  ];
 }
 
 /// Makes [AppState] reachable from any widget and rebuilds dependents when
